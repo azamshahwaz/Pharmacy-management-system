@@ -1,18 +1,26 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
-const FROM_EMAIL = "A Pharmacy <onboarding@resend.dev>"; // free tier default
+const FROM_EMAIL = `A Pharmacy <${process.env.EMAIL_FROM}>`;
 
 // =============================
-// ✅ OTP EMAIL
+// OTP EMAIL
 // =============================
 export const sendOTPEmail = async (email, otp) => {
   try {
-    const { error } = await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to: email,
-      subject: `Email verification code: ${otp} – OTP Valid for 5 Minutes`,
+      subject: `Email verification code: ${otp} - OTP Valid for 5 Minutes`,
       text: `Dear User,
 
 Thank you for signing up with us!
@@ -25,11 +33,6 @@ Regards,
 New Drug Team`,
     });
 
-    if (error) {
-      console.log("MAIL ERROR:", error);
-      return false;
-    }
-
     console.log("OTP mail sent to:", email);
     return true;
   } catch (error) {
@@ -39,11 +42,11 @@ New Drug Team`,
 };
 
 // =============================
-// ✅ ORDER PLACED EMAIL
+// ORDER PLACED EMAIL
 // =============================
 export const sendOrderPlacedEmail = async (email, order) => {
   try {
-    const { error } = await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to: email,
       subject: "Order Received (Pending Approval)",
@@ -64,14 +67,14 @@ Regards,
 New Drug Team`,
     });
 
-    if (error) console.log("Order placed mail error:", error);
+    console.log("Order placed mail sent:", email);
   } catch (error) {
-    console.log("Order placed mail error:", error.message);
+    console.log("Order placed mail error:", error);
   }
 };
 
 // =============================
-// ✅ ORDER STATUS EMAIL
+// ORDER STATUS EMAIL
 // =============================
 export const sendOrderStatusEmail = async (email, order) => {
   try {
@@ -104,7 +107,7 @@ Thank you for choosing New Drug!`;
         return;
     }
 
-    const { error } = await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to: email,
       subject,
@@ -120,14 +123,14 @@ Regards,
 New Drug Team`,
     });
 
-    if (error) console.log("Order status mail error:", error);
+    console.log("Order status mail sent:", email);
   } catch (error) {
-    console.log("Order status mail error:", error.message);
+    console.log("Order status mail error:", error);
   }
 };
 
 // =============================
-// ✅ USER STATUS EMAIL
+// USER STATUS EMAIL
 // =============================
 export const sendUserStatusEmail = async (email, user) => {
   try {
@@ -157,7 +160,7 @@ Please contact support for assistance.`;
         return;
     }
 
-    const { error } = await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to: email,
       subject,
@@ -171,8 +174,8 @@ Regards,
 New Drug Team`,
     });
 
-    if (error) console.log("User status mail error:", error);
+    console.log("User status mail sent:", email);
   } catch (error) {
-    console.log("User status mail error:", error.message);
+    console.log("User status mail error:", error);
   }
 };
