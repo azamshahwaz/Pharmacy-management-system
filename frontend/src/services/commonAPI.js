@@ -1,4 +1,4 @@
-import API from "./apiclient";
+import API from "./apiClient";
 
 // 👉 GET ALL USERS
 export const getAllUsers =
