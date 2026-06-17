@@ -94,7 +94,11 @@ export const signup = async (req, res, next) => {
         otpExpiry: Date.now() + 5 * 60 * 1000
       });
 
-      await sendOTPEmail(email, otp);
+      const mailSent = await sendOTPEmail(email, otp);
+
+if (!mailSent) {
+  console.log("OTP mail failed");
+}
 
       return res.status(200).json({
         message: "New OTP sent successfully"
@@ -120,11 +124,17 @@ export const signup = async (req, res, next) => {
     });
 
     // ===== Send OTP =====
-    await sendOTPEmail(email, otp);
+const mailSent = await sendOTPEmail(email, otp);
 
-    return res.status(200).json({
-      message: "OTP sent successfully. Please verify your email"
-    });
+if (!mailSent) {
+  console.log("OTP mail failed");
+}
+
+return res.status(200).json({
+  message: mailSent
+    ? "OTP sent successfully. Please verify your email"
+    : "User registered but OTP email could not be sent"
+});
 
   } catch (error) {
   next(error);

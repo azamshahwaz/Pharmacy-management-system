@@ -44,10 +44,12 @@ Valid for 5 minutes.
 Regards,
 New Drug Team`,
     });
+    return true;
+    
   } catch (error) {
-    console.log("MAIL ERROR:", error);
-    throw new Error("Failed to send OTP");
-  }
+  console.log("MAIL ERROR:", error);
+  return false;
+}
 };
 
 
