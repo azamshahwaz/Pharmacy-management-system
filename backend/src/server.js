@@ -68,10 +68,10 @@ app.use(globalLimiter);
 
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? process.env.FRONTEND_URL
-        : "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://pharmacy-management-system-frontend-310t.onrender.com",
+    ],
     credentials: true,
   })
 );
