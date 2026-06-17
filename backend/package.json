@@ -33,6 +33,7 @@
     "puppeteer": "^24.42.0",
     "qrcode": "^1.5.4",
     "razorpay": "^2.9.6",
+    "resend": "^6.14.0",
     "speakeasy": "^2.0.0",
     "ua-parser-js": "^2.0.9",
     "useragent": "^2.3.0",

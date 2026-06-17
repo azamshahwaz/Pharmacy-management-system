@@ -1,36 +1,16 @@
-import dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+import { Resend } from "resend";
 
-import nodemailer from "nodemailer";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ✅ GLOBAL transporter
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 20000,
-  greetingTimeout: 20000,
-  socketTimeout: 20000,
-});
-transporter.verify((error) => {
-  if (error) {
-    console.log("SMTP ERROR:", error);
-  } else {
-    console.log("SMTP Ready");
-  }
-});
+const FROM_EMAIL = "A Pharmacy <onboarding@resend.dev>"; // free tier default
 
 // =============================
 // ✅ OTP EMAIL
 // =============================
 export const sendOTPEmail = async (email, otp) => {
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: email,
       subject: `Email verification code: ${otp} – OTP Valid for 5 Minutes`,
       text: `Dear User,
@@ -44,22 +24,27 @@ Valid for 5 minutes.
 Regards,
 New Drug Team`,
     });
-    return true;
-    
-  } catch (error) {
-  console.log("MAIL ERROR:", error);
-  return false;
-}
-};
 
+    if (error) {
+      console.log("MAIL ERROR:", error);
+      return false;
+    }
+
+    console.log("OTP mail sent to:", email);
+    return true;
+  } catch (error) {
+    console.log("MAIL ERROR:", error);
+    return false;
+  }
+};
 
 // =============================
 // ✅ ORDER PLACED EMAIL
 // =============================
 export const sendOrderPlacedEmail = async (email, order) => {
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: email,
       subject: "Order Received (Pending Approval)",
       text: `Dear ${order.user.name},
@@ -78,11 +63,12 @@ Thank you for choosing New Drug.
 Regards,
 New Drug Team`,
     });
+
+    if (error) console.log("Order placed mail error:", error);
   } catch (error) {
-    console.log("mail error:", error.message);
+    console.log("Order placed mail error:", error.message);
   }
 };
-
 
 // =============================
 // ✅ ORDER STATUS EMAIL
@@ -113,10 +99,13 @@ Please contact support if needed.`;
 
 Thank you for choosing New Drug!`;
         break;
+
+      default:
+        return;
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: email,
       subject,
       text: `Dear ${order.user.name},
@@ -130,14 +119,15 @@ Status: ${order.status}
 Regards,
 New Drug Team`,
     });
+
+    if (error) console.log("Order status mail error:", error);
   } catch (error) {
-    console.log("Error:", error.message);
+    console.log("Order status mail error:", error.message);
   }
 };
 
-
 // =============================
-// ✅ USER STATUS EMAIL (🔥 NEW)
+// ✅ USER STATUS EMAIL
 // =============================
 export const sendUserStatusEmail = async (email, user) => {
   try {
@@ -151,7 +141,7 @@ export const sendUserStatusEmail = async (email, user) => {
 
 You can now log in and start using our services.
 
-Thank you for choosing New Drug — we’re happy to have you onboard!`;
+Thank you for choosing New Drug — we're happy to have you onboard!`;
         break;
 
       case "rejected":
@@ -164,11 +154,11 @@ Please contact support for assistance.`;
         break;
 
       default:
-        return; // ❌ no mail for other statuses
+        return;
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: email,
       subject,
       text: `Dear ${user.name},
@@ -181,6 +171,7 @@ Regards,
 New Drug Team`,
     });
 
+    if (error) console.log("User status mail error:", error);
   } catch (error) {
     console.log("User status mail error:", error.message);
   }
