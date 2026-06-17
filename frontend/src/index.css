@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================= SWEET ALERT POPUP ================= */
+
+.danger-popup {
+  border-radius: 28px !important;
+  padding: 2rem !important;
+
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.12),
+    0 10px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+.danger-popup .swal2-title {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  color: #1f2937;
+}
+
+.danger-popup .swal2-html-container {
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  color: #4b5563;
+}
+
+/* ================= ACTIONS CONTAINER ================= */
+
+.swal2-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  margin-top: 1.5rem !important;
+}
+
+/* ================= COMMON BUTTON STYLE ================= */
+
+.swal-confirm-button,
+.swal-delete-btn,
+.swal-deactivate-btn,
+.swal-cancel-button,
+.swal-cancel-btn {
+  border: none;
+  border-radius: 16px;
+
+  min-width: 190px;
+  height: 54px;
+
+  padding: 0 24px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* ================= SHINE EFFECT ================= */
+
+.swal-delete-btn::before,
+.swal-deactivate-btn::before,
+.swal-confirm-button::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 60%;
+  height: 100%;
+
+  background: rgba(255,255,255,0.18);
+
+  transform: skewX(-20deg);
+
+  transition: 0.5s ease;
+}
+
+.swal-delete-btn:hover::before,
+.swal-deactivate-btn:hover::before,
+.swal-confirm-button:hover::before {
+  left: 140%;
+}
+
+/* ================= DELETE ================= */
+
+.swal-delete-btn {
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #dc2626
+  );
+
+  color: white;
+
+  box-shadow:
+    0 8px 20px rgba(220, 38, 38, 0.25);
+}
+
+.swal-delete-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 28px rgba(220, 38, 38, 0.35);
+}
+
+/* ================= GREEN BUTTONS ================= */
+
+.swal-confirm-button,
+.swal-deactivate-btn {
+  background: linear-gradient(
+    135deg,
+    #11875d,
+    #0f6b47
+  );
+
+  color: white;
+
+  box-shadow:
+    0 8px 20px rgba(15, 107, 71, 0.25);
+}
+
+.swal-confirm-button:hover,
+.swal-deactivate-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 28px rgba(15, 107, 71, 0.35);
+}
+
+/* ================= CANCEL ================= */
+
+.swal-cancel-button,
+.swal-cancel-btn {
+  background: #f8fafc;
+
+  color: #334155;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.05);
+}
+
+.swal-cancel-button:hover,
+.swal-cancel-btn:hover {
+  background: #eef2f7;
+
+  transform: translateY(-2px);
+}
+
+/* Keep Account Full Width */
+
+.swal-cancel-btn {
+  flex: 1 1 100%;
+  max-width: 392px;
+}
+
+/* ================= CLICK EFFECT ================= */
+
+.swal-delete-btn:active,
+.swal-deactivate-btn:active,
+.swal-confirm-button:active,
+.swal-cancel-btn:active,
+.swal-cancel-button:active {
+  transform: scale(0.96);
+}
