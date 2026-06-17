@@ -1,4 +1,4 @@
-import Sale from "../../models/sale.js";
+import Sale from "../../models/Sale.js";
 
 // GET /sales
 

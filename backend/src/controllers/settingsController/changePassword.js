@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 import bcrypt from "bcrypt";
 import { validatePassword } from "../../utils/passwordValidator.js";
-import ActivityLog from "../../models/activitylog.js";
+import ActivityLog from "../../models/Activitylog.js";
 
 export const changePassword = async (req, res, next) => {
   try {

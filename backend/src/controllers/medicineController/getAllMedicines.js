@@ -1,4 +1,4 @@
-import Medicine from "../../models/medicine.js";
+import Medicine from "../../models/Medicine.js";
 import APIFeatures from "../../utils/apiFeatures.js";
 
 const getAllMedicines = async (req, res, next) => {

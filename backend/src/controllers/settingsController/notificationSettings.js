@@ -1,5 +1,5 @@
 import User from "../../models/User.js";
-import ActivityLog from "../../models/activitylog.js";
+import ActivityLog from "../../models/Activitylog.js";
 
 // ======================================
 // GET NOTIFICATION SETTINGS

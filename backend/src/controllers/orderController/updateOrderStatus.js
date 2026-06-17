@@ -1,5 +1,5 @@
 import Order from "../../models/Order.js";
-import ActivityLog from "../../models/ActivityLog.js";
+import ActivityLog from "../../models/Activitylog.js";
 import { sendOrderStatusEmail } from "../../utils/sendMail.js";
 import { getMembershipLevel } from "../../utils/membership.js";
 import User from "../../models/User.js";

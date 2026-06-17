@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import User from "../../models/User.js";
-import Order from "../../models/order.js";
+import Order from "../../models/Order.js";
 
 export const getProfileStats = async (
   req,

@@ -1,8 +1,8 @@
-import Order from "../../models/order.js";
-import Medicine from "../../models/medicine.js";
+import Order from "../../models/Order.js";
+import Medicine from "../../models/Medicine.js";
 import User from "../../models/User.js";
 import { sendOrderPlacedEmail } from "../../utils/sendMail.js";
-import ActivityLog from "../../models/ActivityLog.js";
+import ActivityLog from "../../models/Activitylog.js";
 
 export const placeOrder = async (req, res, next) => {
   try {

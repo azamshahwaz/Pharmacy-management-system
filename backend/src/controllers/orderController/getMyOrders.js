@@ -1,4 +1,4 @@
-import Order from "../../models/order.js";
+import Order from "../../models/Order.js";
 import APIFeatures from "../../utils/apiFeatures.js";
 
 export const getMyOrders = async (req, res, next) => {

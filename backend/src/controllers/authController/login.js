@@ -1,6 +1,6 @@
 import { logger } from "../../utils/logger.js";
 import User from "../../models/User.js";
-import Session from "../../models/sessionModel.js";
+import Session from "../../models/SessionModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UAParser } from "ua-parser-js";

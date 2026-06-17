@@ -1,4 +1,4 @@
-import ActivityLog from "../../models/ActivityLog.js";
+import ActivityLog from "../../models/Activitylog.js";
 import User from "../../models/User.js";
 
 export const getUserActivity = async (

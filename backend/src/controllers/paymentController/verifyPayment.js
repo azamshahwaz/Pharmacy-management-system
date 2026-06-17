@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import Payment from "../../models/payment.js";
+import Payment from "../../models/Payment.js";
 
 export const verifyPayment = async (
   req,

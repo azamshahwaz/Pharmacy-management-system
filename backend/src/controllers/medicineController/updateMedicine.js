@@ -1,4 +1,4 @@
-import Medicine from "../../models/medicine.js";
+import Medicine from "../../models/Medicine.js";
 
 const updateMedicine = async (req, res, next) => {
   try {
@@ -39,30 +39,49 @@ const updateMedicine = async (req, res, next) => {
       let isDifferent = false;
 
       // 🔥 EXPIRY DATE HANDLING
-      if (key === "expiryDate") {
-        const incomingDate = new Date(
-          updates[key]
-        ).toISOString();
+      if (
+  key === "expiryDate" &&
+  updates[key] !== undefined &&
+  updates[key] !== null &&
+  updates[key] !== ""
+) {
+  const parsedIncomingDate = new Date(
+    updates[key]
+  );
 
-        const existingDate = new Date(
+  if (
+    isNaN(parsedIncomingDate.getTime())
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid expiry date",
+    });
+  }
+
+  const incomingDate =
+    parsedIncomingDate.toISOString();
+
+  const existingDate =
+    medicine[key]
+      ? new Date(
           medicine[key]
-        ).toISOString();
+        ).toISOString()
+      : null;
 
-        isDifferent =
-          incomingDate !== existingDate;
+  isDifferent =
+    incomingDate !== existingDate;
 
-        // 👉 Only admin can change expiry date
-        if (
-          isDifferent &&
-          req.user.role !== "admin"
-        ) {
-          return res.status(403).json({
-            success: false,
-            message:
-              "Only admin can update expiry date",
-          });
-        }
-      } else {
+  if (
+    isDifferent &&
+    req.user.role !== "admin"
+  ) {
+    return res.status(403).json({
+      success: false,
+      message:
+        "Only admin can update expiry date",
+    });
+  }
+} else {
         // ✅ normal field comparison
         isDifferent =
           updates[key] != medicine[key];

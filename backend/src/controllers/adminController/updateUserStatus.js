@@ -1,5 +1,5 @@
 import User from "../../models/User.js";
-import ActivityLog from "../../models/ActivityLog.js";
+import ActivityLog from "../../models/Activitylog.js";
 import { sendUserStatusEmail } from "../../utils/sendMail.js";
 
 export const updateUserStatus = async (req, res, next) => {

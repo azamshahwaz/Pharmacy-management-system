@@ -1,5 +1,5 @@
 import User from "../../models/User.js";
-import ActivityLog from "../../models/ActivityLog.js";
+import ActivityLog from "../../models/Activitylog.js";
 
 export const updateAddress = async (req, res, next) => {
   try {

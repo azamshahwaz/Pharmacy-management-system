@@ -1,4 +1,4 @@
-import Medicine from "../../models/medicine.js";
+import Medicine from "../../models/Medicine.js";
 
 const deleteMedicine = async (req, res, next) => {
   try {
