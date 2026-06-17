@@ -5,13 +5,24 @@ import nodemailer from "nodemailer";
 
 // ✅ GLOBAL transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 20000,
 });
-
+transporter.verify((error) => {
+  if (error) {
+    console.log("SMTP ERROR:", error);
+  } else {
+    console.log("SMTP Ready");
+  }
+});
 
 // =============================
 // ✅ OTP EMAIL
