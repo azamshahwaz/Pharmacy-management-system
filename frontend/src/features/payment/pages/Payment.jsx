@@ -149,7 +149,7 @@ export default function Payment() {
       );
     }
 
-    navigate("/dashboard/track");
+    navigate("/dashboard/track-orders");
   };
 
   return (
