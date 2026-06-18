@@ -128,15 +128,21 @@ function RecentOrdersTable({ orders = [], loading, navigate }) {
 }
 
 // ─── RECENT USERS TABLE ─────────────────────────────────────
-function RecentUsersTable({ users = [], loading }) {
+function RecentUsersTable({ users = [], loading, navigate }) {
   return (
     <div className="bg-white border shadow-sm rounded-2xl p-5">
       <div className="flex items-center justify-between mb-5">
-        <div>
-          <h2 className="text-xl font-bold text-green-900">Recent Users</h2>
-          <p className="text-sm text-gray-500 mt-1">Newly registered users</p>
-        </div>
-      </div>
+  <div>
+    <h2 className="text-xl font-bold text-green-900">Recent Users</h2>
+    <p className="text-sm text-gray-500 mt-1">Newly registered users</p>
+  </div>
+  <button
+    onClick={() => navigate("/dashboard/customers")}
+    className="bg-green-700 hover:bg-green-800 text-white text-sm px-4 py-2 rounded-lg transition"
+  >
+    View All
+  </button>
+</div>
 
       <div className="overflow-x-auto border rounded-2xl">
         <table className="w-full text-sm">
@@ -272,7 +278,7 @@ export default function StaffView() {
       </div>
 
       <RecentOrdersTable orders={orders} loading={loading} navigate={navigate} />
-      <RecentUsersTable users={users} loading={loading} />
+      <RecentUsersTable users={users} loading={loading} navigate={navigate} />
     </div>
   );
-}
+} 
