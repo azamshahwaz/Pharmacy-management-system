@@ -34,7 +34,7 @@ const FROM_EMAIL = `A Pharmacy <${process.env.EMAIL_FROM}>`;
 // =============================
 export const sendOTPEmail = async (email, otp) => {
   try {
-    await transporter.sendMail({
+   const info = await transporter.sendMail({
       from: FROM_EMAIL,
       to: email,
       subject: `Email verification code: ${otp} - OTP Valid for 5 Minutes`,
@@ -49,11 +49,13 @@ Valid for 5 minutes.
 Regards,
 New Drug Team`,
     });
+    console.log("MESSAGE ID:", info.messageId);
 
     console.log("OTP mail sent to:", email);
     return true;
   } catch (error) {
     console.log("MAIL ERROR:", error);
+    console.log("FULL ERROR:", JSON.stringify(error, null, 2));
     return false;
   }
 };
