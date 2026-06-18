@@ -15,4 +15,5 @@ export { getProfileStats } from "./getProfileStats.js";
 export {
   getPaymentSettings,
   updatePaymentSettings,
+  getRazorpayKey
 } from "./paymentSettingsController.js";

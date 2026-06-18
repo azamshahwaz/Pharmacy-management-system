@@ -11,8 +11,9 @@ import {
   getProfileStats,
   getPaymentSettings,
   updatePaymentSettings,
+  getRazorpayKey,
 } from "../controllers/userController/index.js";
-import { getRazorpayKey } from "../controllers/paymentSettingsController.js";
+
 
 const router = express.Router();
 
