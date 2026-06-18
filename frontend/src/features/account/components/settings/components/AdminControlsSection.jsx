@@ -22,7 +22,7 @@ export default function AdminControlsSection() {
       try {
         setLoading(true);
         const response = await fetch(
-          `${API}/api/v1/admin/users`,
+          `${API}/admin/users`,
           { credentials: "include" }
         );
         const data = await response.json();
@@ -43,7 +43,7 @@ export default function AdminControlsSection() {
     try {
       setActionLoading("role-" + roleModal.userId);
       const response = await fetch(
-        `${API}/api/v1/admin/users/change-role`,
+        `${API}/admin/users/change-role`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -75,7 +75,7 @@ export default function AdminControlsSection() {
       setActionLoading("block-" + userId);
       const endpoint = isBlocked ? "unblock" : "block";
       const response = await fetch(
-        `${API}/api/v1/admin/users/${endpoint}`,
+        `${API}/admin/users/${endpoint}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -104,7 +104,7 @@ export default function AdminControlsSection() {
     try {
       setActionLoading("delete-" + userId);
       const response = await fetch(
-        `${API}/api/v1/admin/users/soft-delete`,
+        `${API}/admin/users/soft-delete`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -137,7 +137,7 @@ export default function AdminControlsSection() {
     try {
       setActionLoading("restore-" + userId);
       const response = await fetch(
-        `${API}/api/v1/admin/users/restore`,
+        `${API}/admin/users/restore`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
