@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+const API = import.meta.env.VITE_API_URL;
+
 export default function AdminControlsSection() {
 
   // ================= STATES =================
@@ -20,7 +22,7 @@ export default function AdminControlsSection() {
       try {
         setLoading(true);
         const response = await fetch(
-          "http://localhost:5000/api/v1/admin/users",
+          `${API}/api/v1/admin/users`,
           { credentials: "include" }
         );
         const data = await response.json();
@@ -41,7 +43,7 @@ export default function AdminControlsSection() {
     try {
       setActionLoading("role-" + roleModal.userId);
       const response = await fetch(
-        "http://localhost:5000/api/v1/admin/users/change-role",
+        `${API}/api/v1/admin/users/change-role`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -73,7 +75,7 @@ export default function AdminControlsSection() {
       setActionLoading("block-" + userId);
       const endpoint = isBlocked ? "unblock" : "block";
       const response = await fetch(
-        `http://localhost:5000/api/v1/admin/users/${endpoint}`,
+        `${API}/api/v1/admin/users/${endpoint}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -99,11 +101,10 @@ export default function AdminControlsSection() {
 
   // ================= SOFT DELETE =================
   const softDeleteUser = async (userId) => {
-    // window.confirm wali line HATO, seedha API call karo
     try {
       setActionLoading("delete-" + userId);
       const response = await fetch(
-        "http://localhost:5000/api/v1/admin/users/soft-delete",
+        `${API}/api/v1/admin/users/soft-delete`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -122,7 +123,7 @@ export default function AdminControlsSection() {
         )
       );
       toast.success(data.message);
-      setDeleteModal(null); // ✅ modal band karo
+      setDeleteModal(null);
     } catch (err) {
       console.error(err);
       toast.error(err.message);
@@ -136,7 +137,7 @@ export default function AdminControlsSection() {
     try {
       setActionLoading("restore-" + userId);
       const response = await fetch(
-        "http://localhost:5000/api/v1/admin/users/restore",
+        `${API}/api/v1/admin/users/restore`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
