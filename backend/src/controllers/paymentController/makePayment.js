@@ -24,6 +24,7 @@ const makePayment = async (req, res, next) => {
       receipt: `receipt_${Date.now()}`,
     };
 
+    const razorpay = getRazorpayInstance();
     const order = await razorpay.orders.create(options);
 
     res.status(200).json({
