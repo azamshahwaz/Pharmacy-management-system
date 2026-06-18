@@ -221,8 +221,7 @@ const Invoice = ({
 
                 <div className="mt-2 space-y-1">
                   <p className="text-sm text-gray-600">
-                    Kushar Chowk, Mahua,
-                    Vaishali
+                    Patna, Bihar
                   </p>
 
                   <p className="flex items-center gap-2 text-sm text-gray-600">
@@ -475,7 +474,7 @@ const Invoice = ({
                       </td>
 
                       <td className="p-4">
-                        ₹ {item.price}
+                        ₹ {Number(item.price).toFixed(2)}
                       </td>
 
                       {/* QTY */}
