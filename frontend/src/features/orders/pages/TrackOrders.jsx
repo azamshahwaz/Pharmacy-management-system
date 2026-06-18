@@ -60,7 +60,7 @@ const TrackOrders = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {orders.map((order) => {
+          {orders.map((order, index) => {
             const isPaid = order.isPaid === true || order.paymentStatus === "paid";
             const currentStep = statusSteps.indexOf(order.status);
 
