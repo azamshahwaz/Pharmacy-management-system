@@ -7,7 +7,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useMemo, useState , useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import API from "../../../services/apiClient";
 
 const Invoice = ({
@@ -21,40 +21,40 @@ const Invoice = ({
   const navigate = useNavigate();
   const { orderId } = useParams();
   const [orderData, setOrderData] =
-  useState(null);
+    useState(null);
   const invoiceRef = useRef();
 
-useEffect(() => {
-  const fetchOrder = async () => {
-    try {
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
 
-      const response =
-  await API.get(
-    `/orders/${orderId}`
-  );
-      setOrderData(
-        response.data.order ||
-        response.data.data ||
-        response.data
-      );
+        const response =
+          await API.get(
+            `/orders/${orderId}`
+          );
+        setOrderData(
+          response.data.order ||
+          response.data.data ||
+          response.data
+        );
 
-    } catch (error) {
+      } catch (error) {
 
-      console.error(
-        "Error fetching order:",
-        error
-      );
+        console.error(
+          "Error fetching order:",
+          error
+        );
+      }
+    };
+
+    if (orderId) {
+      fetchOrder();
     }
-  };
 
-  if (orderId) {
-    fetchOrder();
-  }
+  }, [orderId]);
 
-}, [orderId]);
-
-const currentOrder =
-  order || orderData;
+  const currentOrder =
+    order || orderData;
 
   // =========================
   // PRINT
@@ -110,12 +110,12 @@ const currentOrder =
     totalAfterDiscount + packing;
 
   if (!currentOrder) {
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-      Loading Invoice...
-    </div>
-  );
-}
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading Invoice...
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6 bg-[#f4f7f6] min-h-screen">
@@ -217,7 +217,7 @@ const currentOrder =
                   Health is Our Priority
                 </p>
 
-                
+
 
                 <div className="mt-2 space-y-1">
                   <p className="text-sm text-gray-600">
@@ -227,7 +227,7 @@ const currentOrder =
 
                   <p className="flex items-center gap-2 text-sm text-gray-600">
                     <Phone size={14} />
-                    8969884864
+                    9091909190
                   </p>
 
                   <p className="flex items-center gap-2 text-sm text-gray-600">
@@ -238,7 +238,7 @@ const currentOrder =
               </div>
             </div>
 
-           
+
 
             {/* RIGHT */}
             <div className="bg-[#f8faf9] border border-[#e5e7eb] rounded-2xl p-4 text-sm">
@@ -270,12 +270,11 @@ const currentOrder =
                 <span>:</span>
 
                 <span>
-                  {currentOrder?.createdAt
+                  {currentOrder?.createdAt &&
+                    !isNaN(new Date(currentOrder.createdAt).getTime())
                     ? new Date(
-                        currentOrder.createdAt
-                      ).toLocaleString(
-                        "en-IN"
-                      )
+                      currentOrder.createdAt
+                    ).toLocaleString("en-IN")
                     : "-"}
                 </span>
 
@@ -287,7 +286,7 @@ const currentOrder =
 
                 <span>
                   {currentOrder?.paymentMethod ===
-                  "cod"
+                    "cod"
                     ? "Cash"
                     : "Online"}
                 </span>
@@ -387,7 +386,7 @@ const currentOrder =
 
                 <span>
                   {currentOrder?.paymentMethod ===
-                  "cod"
+                    "cod"
                     ? "Cash"
                     : "Online"}
                 </span>
@@ -554,8 +553,8 @@ const currentOrder =
 
               <div className="bg-[#f4f7f6] px-5 py-4 border-b border-[#e5e7eb]">
                 <h3 className="text-[30px] font-bold text-[#0f5c2e]">
-  Billing Summary
-</h3>
+                  Billing Summary
+                </h3>
               </div>
 
               <div className="p-5 space-y-4">
@@ -593,15 +592,15 @@ const currentOrder =
                 <div className="bg-[#eef7f1] rounded-2xl p-5 flex items-center justify-between">
 
                   <div>
-  <p className="text-[26px] font-bold text-[#0f5c2e]">
-    Grand Total
-  </p>
+                    <p className="text-[26px] font-bold text-[#0f5c2e]">
+                      Grand Total
+                    </p>
 
-  <span className="text-sm text-gray-800">
-    Including discounts &
-    charges
-  </span>
-</div>
+                    <span className="text-sm text-gray-800">
+                      Including discounts &
+                      charges
+                    </span>
+                  </div>
 
                   <span className="text-[30px] leading-none font-bold text-[#067a35]">
                     ₹ {grandTotal.toFixed(2)}
@@ -611,23 +610,23 @@ const currentOrder =
             </div>
           </div>
 
-  {/* FOOTER */}
-<div className="mt-8 mb-0 text-center pt-4">
-    <p className="text-teal-700 font-semibold">
-      Thank you for shopping with us!
-    </p>
+          {/* FOOTER */}
+          <div className="mt-8 mb-0 text-center pt-4">
+            <p className="text-teal-700 font-semibold">
+              Thank you for shopping with us!
+            </p>
 
-    <p className="text-sm text-gray-500 mt-1">
-      This is a computer generated invoice.
-    </p>
-  </div>
+            <p className="text-sm text-gray-500 mt-1">
+              This is a computer generated invoice.
+            </p>
+          </div>
 
-</div>
+        </div>
       </div>
 
-{/* PRINT CSS */}
-<style>
-  {`
+      {/* PRINT CSS */}
+      <style>
+        {`
     @media print {
 
       @page {
@@ -701,7 +700,7 @@ const currentOrder =
       }
     }
   `}
-</style>
+      </style>
     </div>
   );
 };

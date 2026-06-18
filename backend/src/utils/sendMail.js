@@ -68,7 +68,7 @@ export const sendOrderPlacedEmail = async (email, order) => {
 Your order has been successfully placed!
 
 Order ID: ${order._id}
-Total Amount: ₹${order.grandTotal}
+Total Amount: ₹${Number(order.grandTotal).toFixed(2)}
 Status: Pending Approval
 
 Your order is currently under review by our team.
@@ -119,7 +119,7 @@ export const sendOrderStatusEmail = async (email, order) => {
 ${entry.message}
 
 Order ID: ${order._id}
-Total Amount: ₹${order.grandTotal}
+Total Amount: ₹${Number(order.grandTotal).toFixed(2)}
 Status: ${order.status}
 
 Regards,
