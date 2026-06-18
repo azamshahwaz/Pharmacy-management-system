@@ -1,41 +1,27 @@
-import dns from "dns";
-import nodemailer from "nodemailer";
+import Brevo from "@getbrevo/brevo";
 
-dns.setDefaultResultOrder("ipv4first");
+const apiInstance = new Brevo.TransactionalEmailsApi();
 
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log(
-  "EMAIL_PASS:",
-  process.env.EMAIL_PASS ? "Loaded" : "Missing"
+apiInstance.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
 );
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("GMAIL VERIFY ERROR:", error);
-  } else {
-    console.log("GMAIL SMTP READY");
-  }
-});
-
-const FROM_EMAIL = `A Pharmacy <${process.env.EMAIL_USER}>`;
+const sender = {
+  email: process.env.EMAIL_FROM,
+  name: "A Pharmacy",
+};
 
 // =============================
 // OTP EMAIL
 // =============================
 export const sendOTPEmail = async (email, otp) => {
   try {
-   const info = await transporter.sendMail({
-      from: FROM_EMAIL,
-      to: email,
+    await apiInstance.sendTransacEmail({
+      sender,
+      to: [{ email }],
       subject: `Email verification code: ${otp} - OTP Valid for 5 Minutes`,
-      text: `Dear User,
+      textContent: `Dear User,
 
 Thank you for signing up with us!
 
@@ -46,13 +32,11 @@ Valid for 5 minutes.
 Regards,
 New Drug Team`,
     });
-    console.log("MESSAGE ID:", info.messageId);
 
     console.log("OTP mail sent to:", email);
     return true;
   } catch (error) {
-    console.log("MAIL ERROR:", error);
-    console.log("FULL ERROR:", JSON.stringify(error, null, 2));
+    console.error("OTP MAIL ERROR:", error);
     return false;
   }
 };
@@ -62,11 +46,11 @@ New Drug Team`,
 // =============================
 export const sendOrderPlacedEmail = async (email, order) => {
   try {
-    await transporter.sendMail({
-      from: FROM_EMAIL,
-      to: email,
+    await apiInstance.sendTransacEmail({
+      sender,
+      to: [{ email }],
       subject: "Order Received (Pending Approval)",
-      text: `Dear ${order.user.name},
+      textContent: `Dear ${order.user.name},
 
 Your order has been successfully placed!
 
@@ -85,7 +69,7 @@ New Drug Team`,
 
     console.log("Order placed mail sent:", email);
   } catch (error) {
-    console.log("Order placed mail error:", error);
+    console.error("Order placed mail error:", error);
   }
 };
 
@@ -100,34 +84,31 @@ export const sendOrderStatusEmail = async (email, order) => {
     switch (order.status) {
       case "accepted":
         subject = "Order Approved";
-        message = `Great news! Your order has been successfully accepted.
-
-We are preparing your items for shipment.`;
+        message =
+          "Great news! Your order has been successfully accepted.\n\nWe are preparing your items for shipment.";
         break;
 
       case "rejected":
         subject = "Order Rejected";
-        message = `Unfortunately, your order has been rejected.
-
-Please contact support if needed.`;
+        message =
+          "Unfortunately, your order has been rejected.\n\nPlease contact support if needed.";
         break;
 
       case "delivered":
         subject = "Order Delivered";
-        message = `Your order has been delivered successfully.
-
-Thank you for choosing New Drug!`;
+        message =
+          "Your order has been delivered successfully.\n\nThank you for choosing New Drug!";
         break;
 
       default:
         return;
     }
 
-    await transporter.sendMail({
-      from: FROM_EMAIL,
-      to: email,
+    await apiInstance.sendTransacEmail({
+      sender,
+      to: [{ email }],
       subject,
-      text: `Dear ${order.user.name},
+      textContent: `Dear ${order.user.name},
 
 ${message}
 
@@ -141,7 +122,7 @@ New Drug Team`,
 
     console.log("Order status mail sent:", email);
   } catch (error) {
-    console.log("Order status mail error:", error);
+    console.error("Order status mail error:", error);
   }
 };
 
@@ -176,11 +157,11 @@ Please contact support for assistance.`;
         return;
     }
 
-    await transporter.sendMail({
-      from: FROM_EMAIL,
-      to: email,
+    await apiInstance.sendTransacEmail({
+      sender,
+      to: [{ email }],
       subject,
-      text: `Dear ${user.name},
+      textContent: `Dear ${user.name},
 
 ${message}
 
@@ -192,6 +173,6 @@ New Drug Team`,
 
     console.log("User status mail sent:", email);
   } catch (error) {
-    console.log("User status mail error:", error);
+    console.error("User status mail error:", error);
   }
 };
