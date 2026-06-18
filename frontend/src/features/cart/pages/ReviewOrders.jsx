@@ -39,39 +39,39 @@ export default function ReviewOrders() {
     if (!userId) return;
 
     try {
-  const savedCart = localStorage.getItem(
-    `reviewOrders_${userId}`
-  );
+      const savedCart = localStorage.getItem(
+        `reviewOrders_${userId}`
+      );
 
-  if (savedCart) {
-    setCartItems(JSON.parse(savedCart));
-  }
-} catch (err) {
-  console.error("Invalid cart data", err);
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      }
+    } catch (err) {
+      console.error("Invalid cart data", err);
 
-  localStorage.removeItem(
-    `reviewOrders_${userId}`
-  );
-}
+      localStorage.removeItem(
+        `reviewOrders_${userId}`
+      );
+    }
   }, [userId]);
 
   // =========================
   // UPDATE STORAGE
   // =========================
-const updateStorage = (updated) => {
-  setCartItems(updated);
+  const updateStorage = (updated) => {
+    setCartItems(updated);
 
-  if (!userId) return;
+    if (!userId) return;
 
-  try {
-    localStorage.setItem(
-      `reviewOrders_${userId}`,
-      JSON.stringify(updated)
-    );
-  } catch (err) {
-    console.error("Failed to save cart", err);
-  }
-};
+    try {
+      localStorage.setItem(
+        `reviewOrders_${userId}`,
+        JSON.stringify(updated)
+      );
+    } catch (err) {
+      console.error("Failed to save cart", err);
+    }
+  };
 
   // =========================
   // REMOVE ITEM
@@ -244,13 +244,13 @@ const updateStorage = (updated) => {
           );
 
         const { data } = await API.post(
-  "/orders",
-  {
-    items,
-    grandTotal,
-    paymentMethod: "online",
-  }
-);
+          "/orders",
+          {
+            items,
+            grandTotal,
+            paymentMethod: "online",
+          }
+        );
 
         // ✅ SUCCESS
         if (
@@ -527,9 +527,7 @@ const updateStorage = (updated) => {
                       </td>
 
                       <td className="px-5 py-5 font-semibold text-[#111827]">
-                        ₹{" "}
-                        {item.price ||
-                          0}
+                        ₹ {Number(item.price || 0).toFixed(2)}
                       </td>
 
                       <td className="px-5 py-5">
