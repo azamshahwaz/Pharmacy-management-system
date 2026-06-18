@@ -17,6 +17,7 @@ function SpendingChart({ orders = [] }) {
   .filter((o) => o.status === "delivered")
   .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
   .map((o) => ({
+    label: `order ${index + 1}`,
     date: new Date(o.createdAt).toLocaleString("en-IN", {
       day: "2-digit",
       month: "short",
@@ -27,19 +28,23 @@ function SpendingChart({ orders = [] }) {
     spent: Number(o.grandTotal || 0),
   }));
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-md px-3 py-2 text-sm">
-          <p className="text-gray-500 mb-1">{label}</p>
-          <p className="font-semibold text-green-700">
-            ₹{payload[0].value.toLocaleString("en-IN")}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+
+// CustomTooltip mein label ki jagah date dikhao:
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { date, spent } = payload[0].payload;  // ← payload se full object lo
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg shadow-md px-3 py-2 text-sm">
+        <p className="text-gray-500 mb-1">{date}</p>
+        <p className="font-semibold text-green-700">
+          ₹{spent.toLocaleString("en-IN")}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
 
   return (
     <div className="bg-white border shadow-sm rounded-2xl p-5">

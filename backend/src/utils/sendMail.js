@@ -12,7 +12,7 @@ const sendEmail = async (to, subject, textContent) => {
     body: JSON.stringify({
       sender: {
         email: process.env.EMAIL_FROM,
-        name: "A Pharmacy",
+        name: "New Drug",
       },
       to: [{ email: to }],
       subject,
