@@ -24,17 +24,15 @@ export const signup = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid role" });
     }
 
-    // ===== 🚫 Prevent multiple admins (DB + temp store) =====
+    // ===== Prevent multiple admins =====
     if (role === "admin") {
       const existingAdmin = await User.findOne({ role: "admin" });
-
       const tempAdminExists = [...tempUsers.values()].some(
         (u) => u.role === "admin"
       );
-
       if (existingAdmin || tempAdminExists) {
         return res.status(403).json({
-          message: "Admin already exists. Only one admin allowed"
+          message: "Admin already exists. Only one admin allowed",
         });
       }
     }
@@ -56,53 +54,39 @@ export const signup = async (req, res, next) => {
       return res.status(400).json({ message: "Weak password" });
     }
 
-    // ===== Address validation (ONLY for customer) =====
+    // ===== Address validation (customer only) =====
     if (role === "customer") {
-      if (
-        !address ||
-        !address.shopName ||
-        !address.street ||
-        !address.city
-      ) {
+      if (!address || !address.shopName || !address.street || !address.city) {
         return res.status(400).json({
-          message: "All address fields are required for customer"
+          message: "All address fields are required for customer",
         });
       }
     }
 
     // ===== Existing user check =====
-    const existingUser = await User.findOne({
-      $or: [{ email }, { phone }]
-    });
-
+    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
     if (existingUser) {
       return res.status(400).json({
-        message: "Email or phone already registered"
+        message: "Email or phone already registered",
       });
     }
 
-    // ===== Check temp store =====
-    let tempUser = tempUsers.get(email);
-
-    // 🔁 Resend OTP if already exists
+    // ===== Resend OTP if temp user already exists =====
+    const tempUser = tempUsers.get(email);
     if (tempUser) {
       const otp = generateOTP();
-
       tempUsers.set(email, {
         ...tempUser,
         otp,
-        otpExpiry: Date.now() + 5 * 60 * 1000
+        otpExpiry: Date.now() + 5 * 60 * 1000,
       });
 
-      const mailSent = await sendOTPEmail(email, otp);
-
-if (!mailSent) {
-  console.log("OTP mail failed");
-}
-
-      return res.status(200).json({
-        message: "New OTP sent successfully"
-      });
+      // ✅ Response pehle, mail baad mein (non-blocking)
+      res.status(200).json({ message: "New OTP sent successfully" });
+      sendOTPEmail(email, otp).catch((err) =>
+        console.log("OTP resend mail failed:", err)
+      );
+      return;
     }
 
     // ===== Hash password =====
@@ -120,23 +104,18 @@ if (!mailSent) {
       role,
       address,
       otp,
-      otpExpiry: Date.now() + 5 * 60 * 1000
+      otpExpiry: Date.now() + 5 * 60 * 1000,
     });
 
-    // ===== Send OTP =====
-const mailSent = await sendOTPEmail(email, otp);
-
-if (!mailSent) {
-  console.log("OTP mail failed");
-}
-
-return res.status(200).json({
-  message: mailSent
-    ? "OTP sent successfully. Please verify your email"
-    : "User registered but OTP email could not be sent"
-});
+    // ✅ Response pehle bhejo, mail baad mein jaayegi (non-blocking)
+    res.status(200).json({
+      message: "OTP sent successfully. Please verify your email",
+    });
+    sendOTPEmail(email, otp).catch((err) =>
+      console.log("OTP mail failed:", err)
+    );
 
   } catch (error) {
-  next(error);
-}
+    next(error);
+  }
 };

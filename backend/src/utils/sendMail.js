@@ -9,7 +9,13 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
-
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("SMTP VERIFY ERROR:", error);
+  } else {
+    console.log("SMTP SERVER READY");
+  }
+});
 const FROM_EMAIL = `A Pharmacy <${process.env.EMAIL_FROM}>`;
 
 // =============================
