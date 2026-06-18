@@ -189,7 +189,7 @@ function RecentPaymentsTable({ payments = [], loading, navigate }) {
           <p className="text-sm text-gray-500 mt-1">Your latest payment transactions</p>
         </div>
         <button
-          onClick={() => navigate("/dashboard/payments")}
+          onClick={() => navigate("/dashboard/payment-history")}
           className="bg-green-700 hover:bg-green-800 text-white text-sm px-4 py-2 rounded-lg transition"
         >
           View All
