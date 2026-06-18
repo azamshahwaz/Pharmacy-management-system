@@ -13,55 +13,53 @@ import StatusPie, { ORDER_STATUS_COLORS } from "../../../components/charts/Statu
 
 // ─── SPENDING CHART ────────────────────────────────────────
 function SpendingChart({ orders = [] }) {
-   const data = orders
-  .filter((o) => o.status === "delivered")
-  .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  .map((o) => ({
-    label: `order ${index + 1}`,
-    date: new Date(o.createdAt).toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }),
-    spent: Number(o.grandTotal || 0),
-  }));
+  // 1. CustomTooltip pehle define karo
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { date, spent } = payload[0].payload;
+      return (
+        <div className="bg-white border border-gray-200 rounded-lg shadow-md px-3 py-2 text-sm">
+          <p className="text-gray-500 mb-1">{date}</p>
+          <p className="font-semibold text-green-700">
+            ₹{spent.toLocaleString("en-IN")}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
-  <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+  // 2. Phir data banao — index fix ke saath
+  const data = orders
+    .filter((o) => o.status === "delivered")
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    .map((o, index) => ({          // ✅ index added
+      label: `Order ${index + 1}`,
+      date: new Date(o.createdAt).toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
+      spent: Number(o.grandTotal || 0),
+    }));
 
-// CustomTooltip mein label ki jagah date dikhao:
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    const { date, spent } = payload[0].payload;  // ← payload se full object lo
-    return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-md px-3 py-2 text-sm">
-        <p className="text-gray-500 mb-1">{date}</p>
-        <p className="font-semibold text-green-700">
-          ₹{spent.toLocaleString("en-IN")}
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
+  // 3. return — XAxis pe dataKey="label" rakho
   return (
     <div className="bg-white border shadow-sm rounded-2xl p-5">
       <h2 className="text-xl font-bold text-green-900">My Spending</h2>
       <p className="text-sm text-gray-500 mt-1 mb-4">Delivered orders over time</p>
-
       {data.length === 0 ? (
         <div className="h-[250px] flex items-center justify-center text-gray-400">
           No spending data yet
         </div>
       ) : (
-        // ✅ FIX: parent div must have explicit height for ResponsiveContainer
         <div style={{ width: "100%", height: 250 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <XAxis dataKey="label" tick={{ fontSize: 12 }} />  {/* ✅ label */}
               <YAxis
                 tickFormatter={(v) => `₹${v.toLocaleString("en-IN")}`}
                 tick={{ fontSize: 11 }}
