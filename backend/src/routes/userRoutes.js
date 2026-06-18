@@ -1,13 +1,6 @@
 import express from "express";
-
-import {
-  protect,
-} from "../middleware/authMiddleware.js";
-
-import {
-  uploadAvatar,
-} from "../middleware/uploadMiddleware.js";
-
+import { protect } from "../middleware/authMiddleware.js";
+import { uploadAvatar } from "../middleware/uploadMiddleware.js";
 import {
   getProfile,
   updateProfile,
@@ -19,19 +12,15 @@ import {
   getPaymentSettings,
   updatePaymentSettings,
 } from "../controllers/userController/index.js";
+import { getRazorpayKey } from "../controllers/paymentSettingsController.js";
 
-const router =
-  express.Router();
+const router = express.Router();
 
 // ======================================
 // PROFILE ROUTES
 // ======================================
 
-router.get(
-  "/profile",
-  protect,
-  getProfile
-);
+router.get("/profile", protect, getProfile);
 
 router.put(
   "/update-profile",
@@ -44,60 +33,34 @@ router.put(
 // PROFILE STATS
 // ======================================
 
-router.get(
-  "/profile/stats",
-  protect,
-  getProfileStats
-);
+router.get("/profile/stats", protect, getProfileStats);
 
 // ======================================
 // PAYMENT SETTINGS
 // MUST BE BEFORE "/:id"
 // ======================================
 
-router.get(
-  "/payment-settings",
-  protect,
-  getPaymentSettings
-);
+router.get("/payment-settings", protect, getPaymentSettings);
+router.put("/payment-settings", protect, updatePaymentSettings);
 
-router.put(
-  "/payment-settings",
-  protect,
-  updatePaymentSettings
-);
+// ======================================
+// RAZORPAY KEY
+// ======================================
+
+router.get("/razorpay-key", protect, getRazorpayKey);
 
 // ======================================
 // USER HISTORY ROUTES
 // ======================================
 
-router.get(
-  "/:id/orders",
-  protect,
-  getUserOrders
-);
-
-router.get(
-  "/:id/payments",
-  protect,
-  getUserPayments
-);
-
-router.get(
-  "/:id/activity",
-  protect,
-  getUserActivity
-);
+router.get("/:id/orders", protect, getUserOrders);
+router.get("/:id/payments", protect, getUserPayments);
+router.get("/:id/activity", protect, getUserActivity);
 
 // ======================================
-// GET USER BY ID
-// KEEP THIS LAST
+// GET USER BY ID — KEEP THIS LAST
 // ======================================
 
-router.get(
-  "/:id",
-  protect,
-  getUserById
-);
+router.get("/:id", protect, getUserById);
 
 export default router;

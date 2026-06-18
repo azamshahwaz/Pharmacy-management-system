@@ -91,8 +91,8 @@ const Medicines = () => {
   // PRICE
   // =========================================
   const price = form.mrp
-    ? Number(form.mrp) - (Number(form.mrp) * Number(form.discount || 0)) / 100
-    : 0;
+  ? (Number(form.mrp) - (Number(form.mrp) * Number(form.discount || 0)) / 100).toFixed(2)
+  : "0.00";
 
   // =========================================
   // SUBMIT — no token arg needed
@@ -106,7 +106,8 @@ const Medicines = () => {
       productCategory: form.productCategory,
       mrp: Number(form.mrp),
       discount: Number(form.discount || 0),
-      price: Number(form.mrp) - (Number(form.mrp) * Number(form.discount || 0)) / 100,
+      // handleSubmit mein
+      price: Number((Number(form.mrp) - (Number(form.mrp) * Number(form.discount || 0)) / 100).toFixed(2)),
       expiryDate: form.expiryDate,
     };
 
@@ -311,7 +312,7 @@ const Medicines = () => {
                   <td>{med.manufacturer || "-"}</td>
                   <td>₹{med.mrp}</td>
                   <td>{med.discount || 0}%</td>
-                  <td>₹{med.price}</td>
+                  <td>₹{Number(med.price).toFixed(2)}</td>
                   <td>{med.expiryDate?.slice(0, 10) || "-"}</td>
                   <td>
                     <span className={isExpired(med.expiryDate) ? "badge red" : "badge green"}>

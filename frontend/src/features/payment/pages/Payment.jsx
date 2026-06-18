@@ -24,20 +24,23 @@ export default function Payment() {
   // RAZORPAY PAYMENT
   // =========================
   const handleRazorpayPayment = async () => {
-    try {
-      // CREATE ORDER
-      const { data } = await API.post("/payments/create-order", {
-        amount: totalAmount,
-      });
+  try {
+    // FETCH KEY FROM BACKEND
+    const { data: keyData } = await API.get("/users/razorpay-key");
 
-      const options = {
-        key: "rzp_test_StW4MsKnYLEyEv",
-        amount: data.order.amount,
-        currency: data.order.currency,
-        name: "A Pharmacy",
-        description: "Medicine Order Payment",
-        image: "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
-        order_id: data.order.id,
+    // CREATE ORDER
+    const { data } = await API.post("/payments/create-order", {
+      amount: totalAmount,
+    });
+
+    const options = {
+      key: keyData.key,  // ✅ backend se aa rahi hai
+      amount: data.order.amount,
+      currency: data.order.currency,
+      name: "A Pharmacy",
+      description: "Medicine Order Payment",
+      image: "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
+      order_id: data.order.id,
 
         method: {
           upi: true,
@@ -541,7 +544,7 @@ export default function Payment() {
               </span>
 
               <span className="font-semibold">
-                ₹{medicinesTotal}
+                ₹{medicinesTotal.toFixed(2)}
               </span>
 
             </div>
@@ -553,7 +556,7 @@ export default function Payment() {
               </span>
 
               <span className="font-semibold">
-                ₹{deliveryCharges}
+                ₹{deliveryCharges.toFixed(2)}
               </span>
 
             </div>
@@ -565,7 +568,7 @@ export default function Payment() {
               </span>
 
               <span className="font-semibold text-green-600">
-                - ₹{discount}
+                - ₹{discount.toFixed(2)}
               </span>
 
             </div>
@@ -582,7 +585,7 @@ export default function Payment() {
                   </p>
 
                   <h1 className="text-4xl font-extrabold text-black">
-                    ₹{totalAmount}
+                    ₹{totalAmount.toFixed(2)}
                   </h1>
 
                 </div>
@@ -658,7 +661,7 @@ export default function Payment() {
               {
                 selectedMethod === "cash"
                   ? "Place COD Order"
-                  : `Pay ₹${totalAmount}`
+                  : `Pay ₹${totalAmount.toFixed(2)}`
               }
             </button>
 
