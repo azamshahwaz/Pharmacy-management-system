@@ -10,7 +10,7 @@ const PHONE_REGEX = /^[6-9]\d{9}$/;
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/;
 const PASSWORD_MIN = 6;
-const PASSWORD_MAX = 12;
+const PASSWORD_MAX = 18;
 
 function Signup() {
   const [formData, setFormData] = useState({
