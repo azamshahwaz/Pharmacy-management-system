@@ -11,7 +11,7 @@ const API = axios.create({
     "Content-Type": "application/json",
   },
 
-  timeout: 15000,
+  timeout: 30000,
 });
 
 // ======================================

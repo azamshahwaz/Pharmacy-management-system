@@ -8,8 +8,8 @@ import cors from "cors";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
-
-import  connectDB  from "./config/db.js";
+import mongoose from "mongoose";
+import connectDB from "./config/db.js";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -102,6 +102,33 @@ app.get("/", (req, res) => {
 });
 
 // ===================================
+// HEALTH CHECK (with DB ping) — UptimeRobot isi route ko ping kare
+// ===================================
+
+app.get("/health", async (req, res) => {
+  try {
+    await mongoose.connection.db.admin().ping();
+
+    res.status(200).json({
+      success: true,
+      message: "Server is healthy",
+      db: "connected",
+    });
+  } catch (error) {
+    logger.error({
+      type: "HEALTH_CHECK_FAILED",
+      message: error.message,
+    });
+
+    res.status(503).json({
+      success: false,
+      message: "Server up but DB connection issue",
+      error: error.message,
+    });
+  }
+});
+
+// ===================================
 // ROUTES
 // ===================================
 app.use(`${API_VERSION}/auth`, authRoutes);
@@ -131,30 +158,27 @@ app.all("/*splat", (req, res, next) => {
 
 app.use((err, req, res, next) => {
   logger.error({
-  message: err.message,
-  stack: err.stack,
-  method: req.method,
-  url: req.originalUrl,
-  ip: req.ip,
-});
+    message: err.message,
+    stack: err.stack,
+    method: req.method,
+    url: req.originalUrl,
+    ip: req.ip,
+  });
 
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal Server Error";
 
-  // Mongo Invalid ObjectId
   if (err.name === "CastError") {
     statusCode = 400;
     message = "Invalid ID";
   }
 
-  // Mongo Duplicate Key
   if (err.code === 11000) {
     statusCode = 400;
     const field = Object.keys(err.keyValue)[0];
     message = `${field} already exists`;
   }
 
-  // Mongoose Validation
   if (err.name === "ValidationError") {
     statusCode = 400;
     message = Object.values(err.errors)
@@ -201,15 +225,15 @@ connectDB()
   .then(() => {
     app.listen(PORT, () => {
       logger.info(
-  `Server running on port ${PORT} (${process.env.NODE_ENV})`
-);
+        `Server running on port ${PORT} (${process.env.NODE_ENV})`
+      );
     });
   })
   .catch((error) => {
     logger.error({
-  message: "Database connection failed",
-  error: error.message,
-  stack: error.stack,
-});
+      message: "Database connection failed",
+      error: error.message,
+      stack: error.stack,
+    });
     process.exit(1);
   });

@@ -128,12 +128,17 @@ export const login = async (req, res, next) => {
     }
 
     // ==============================
-    // ✅ RESET FAILED ATTEMPTS
+    // ✅ RESET FAILED ATTEMPTS (background — login response ko block nahi karega)
     // ==============================
     user.wrongPasswordAttempts = 0;
     user.lockUntil = null;
-
-    await user.save();
+    user.save().catch((err) =>
+      logger.error({
+        type: "ATTEMPT_RESET_FAILED",
+        userId: user._id,
+        error: err.message,
+      })
+    );
 
     // ==============================
     // ✅ ACCOUNT STATUS CHECK
@@ -182,27 +187,9 @@ export const login = async (req, res, next) => {
     const result = parser.getResult();
 
     // ==============================
-    // ✅ SAVE SESSION
+    // ✅ FINAL RESPONSE — pehle bhejo, session save background mein
     // ==============================
-    await Session.create({
-      user: user._id,
-      token,
-      device: result.device.model || "Desktop",
-      browser: result.browser.name || "Unknown Browser",
-      os: result.os.name
-        ? `${result.os.name} ${result.os.version || ""}`.trim()
-        : "Unknown OS",
-      ip:
-        req.ip ||
-        req.headers["x-forwarded-for"] ||
-        "Unknown IP",
-      lastActive: new Date(),
-    });
-
-    // ==============================
-    // ✅ FINAL RESPONSE
-    // ==============================
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: `Welcome ${user.name}`,
       user: {
@@ -217,6 +204,30 @@ export const login = async (req, res, next) => {
         createdAt: user.createdAt,
       },
     });
+
+    // ==============================
+    // ✅ SAVE SESSION (non-blocking)
+    // ==============================
+    Session.create({
+      user: user._id,
+      token,
+      device: result.device.model || "Desktop",
+      browser: result.browser.name || "Unknown Browser",
+      os: result.os.name
+        ? `${result.os.name} ${result.os.version || ""}`.trim()
+        : "Unknown OS",
+      ip:
+        req.ip ||
+        req.headers["x-forwarded-for"] ||
+        "Unknown IP",
+      lastActive: new Date(),
+    }).catch((err) =>
+      logger.error({
+        type: "SESSION_SAVE_FAILED",
+        userId: user._id,
+        error: err.message,
+      })
+    );
 
   } catch (error) {
     next(error);
