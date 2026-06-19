@@ -18,6 +18,12 @@ export const signup = async (req, res, next) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // ===== Name validation =====
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({ message: "Name should only contain letters and spaces" });
+    }
+
     // ===== Role validation =====
     const allowedRoles = ["admin", "staff", "customer"];
     if (!allowedRoles.includes(role)) {
