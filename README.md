@@ -1,23 +1,33 @@
-#  New Drug — Pharmacy Management System
+# New Drug — Pharmacy Management System
 
 A full-stack **Pharmacy Management System** built using the **MERN Stack** (MongoDB, Express.js, React.js, Node.js) to streamline pharmacy operations, medicine inventory, customer ordering, payments, and role-based administrative control.
 
-🔗 **Live Demo:** (https://pharmacy-management-system-frontend-310t.onrender.com)
-📂 **Repository:** (https://github.com/azamshahwaz/Pharmacy-management-system.git)
+🔗 **Live Demo:** [https://pharmacy-management-system-frontend-310t.onrender.com](https://pharmacy-management-system-frontend-310t.onrender.com)
 
+📂 **Repository:** [https://github.com/azamshahwaz/Pharmacy-management-system](https://github.com/azamshahwaz/Pharmacy-management-system)
 
 
 ## 📸 Screenshots
 
-| Customer Dashboard | Admin Analytics | Order Tracking |
-|---|---|---|
-| ![Screenshot](https://via.placeholder.com/300x180?text=Customer+View) | ![Screenshot](https://via.placeholder.com/300x180?text=Admin+Dashboard) | ![Screenshot](https://via.placeholder.com/300x180?text=Order+Tracking) |
+### Login Page
+![Login](./Screenshots/Login.png)
+
+### Admin Dashboard
+![Admin Dashboard](./Screenshots/AdminReports.png)
+
+### Medicines Management
+![Medicines](./Screenshots/AllMedicinesList.png)
+
+### Order Tracking
+![Orders](./Screenshots/OrderTracking.png)
+
+### Staff Dashboard
+![Staff Dashboard](./Screenshots/StaffDashboard.png)
 
 
 ## 📖 About the Project
 
 New Drug is a role-based pharmacy management platform designed to digitize medicine inventory, order processing, and customer interactions. It supports three distinct roles — **Admin, Staff, and Customer** — each with tailored dashboards, permissions, and workflows. The system was built and deployed end-to-end, including handling real production challenges like email service migration, cold-start mitigation, and secure payment integration.
-
 
 ## ✨ Features
 
@@ -46,6 +56,7 @@ New Drug is a role-based pharmacy management platform designed to digitize medic
 - Complete secure online payments via Razorpay
 - Receive order/account notifications
 
+
 ## 🔐 Authentication & Verification
 
 The system uses secure, OTP-based email authentication:
@@ -63,6 +74,7 @@ The system uses secure, OTP-based email authentication:
 
 
 ## 🏗️ System Workflow
+
 1. Admin logs in
 2. Admin creates/manages Staff accounts
 3. Admin/Staff approve Customer signups
@@ -71,6 +83,7 @@ The system uses secure, OTP-based email authentication:
 6. Staff/Admin process orders and update status
 7. Customers track orders and complete payment
 8. Real-time notifications keep all roles updated
+
 
 ## ⚙️ Tech Stack
 
@@ -92,7 +105,14 @@ The system uses secure, OTP-based email authentication:
 - Render (deployment — free tier)
 - UptimeRobot (uptime monitoring + cold-start mitigation via `/health` endpoint pinging)
 
+
+
+
+
+
+
 ## 🛡️ Security Features
+
 - Email verification with OTP
 - JWT authentication via HttpOnly cookies
 - Role-Based Access Control (RBAC)
@@ -102,27 +122,29 @@ The system uses secure, OTP-based email authentication:
 - Input validation on all forms
 
 
+
 ## 📈 Key Engineering Highlights
+
 - Migrated email service (Gmail SMTP → Resend → Brevo) to work around Render's outbound port restrictions
 - Implemented cold-start mitigation using scheduled health checks to keep the free-tier server warm
 - Used fire-and-forget async patterns for non-blocking DB writes and email dispatch during signup/login
 - Built a reusable, role-aware `StatsCards` component for consistent analytics UI across dashboards
 - Fixed cross-page data consistency issues between Dashboard, Reports, and Orders views
 
----
 
 ## 📄 License
 
 This project is developed for educational and learning purposes.
 
----
 
 ## 🙋 Author
 
-**Shahwaz Alam**
-🔗 [LinkedIn](https://linkedin.com/in/shahwaz-azam) • 💻 [GitHub](https://github.com/your-username)
+**Shahwaz Azam**
 
----
+🔗 [LinkedIn](https://linkedin.com/in/shahwaz-azam)
+
+💻 [GitHub](https://github.com/azamshahwaz)
+
 
 ## 💬 Support
 
