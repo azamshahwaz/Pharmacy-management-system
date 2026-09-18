@@ -14,39 +14,68 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // ─── REFRESH USER FROM COOKIE ───────────────────────────
-const refreshUser = async () => {
-  try {
 
-    const { data } = await API.get("/users/profile");
+  const refreshUser = async () => {
+    try {
+      const { data } = await API.get("/users/profile");
 
-    setUser(data.user || data.data || data);
-  } catch (err) {
+      setUser(data.user || data.data || data);
+    } catch (err) {
+      setUser(null);
+    }
+  };
 
-    setUser(null);
-  }
-};
+  // ─── INITIAL AUTH CHECK ─────────────────────────────────
 
   useEffect(() => {
     const init = async () => {
       await refreshUser();
       setLoading(false);
     };
+
     init();
   }, []);
 
-  // ─── LOGIN ──────────────────────────────────────────────
-  // Cookie is set by the server (httpOnly). We just fetch profile after.
+  // ─── NORMAL LOGIN ───────────────────────────────────────
+
+  // Cookie is set by the server (httpOnly).
+  // We just fetch profile after login.
+
   const login = async (credentials) => {
-    const { data } = await API.post("/auth/login", credentials);
+    const { data } = await API.post(
+      "/auth/login",
+      credentials
+    );
+
     await refreshUser();
+
+    return data;
+  };
+
+  // ─── DEMO ROLE LOGIN ────────────────────────────────────
+
+  // Frontend sends ONLY the role.
+  // Credentials remain inside backend .env.
+
+  const loginAsRole = async (role) => {
+    const { data } = await API.post(
+      "/auth/demo-login",
+      { role }
+    );
+
+    await refreshUser();
+
     return data;
   };
 
   // ─── LOGOUT ─────────────────────────────────────────────
+
   const logout = async () => {
     try {
-      await API.post("/auth/logout"); // server clears the httpOnly cookie
+      await API.post("/auth/logout");
+      // Server clears the httpOnly cookie
     } catch {}
+
     setUser(null);
   };
 
@@ -57,6 +86,7 @@ const refreshUser = async () => {
         setUser,
         loading,
         login,
+        loginAsRole,
         logout,
         refreshUser,
       }}

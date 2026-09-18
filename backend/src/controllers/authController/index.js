@@ -1,4 +1,4 @@
-export { login } from "./login.js";
+export { login, demoLogin } from "./login.js";
 export { logout } from "./logout.js"
 export { signup } from "./signup.js";
 export { verifyOTP } from "./verifyOTP.js";

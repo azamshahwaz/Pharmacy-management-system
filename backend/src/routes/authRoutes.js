@@ -3,6 +3,7 @@ import express from "express";
 import {
   signup,
   login,
+  demoLogin,
   logout,
   verifyOTP,
   resendOTP,
@@ -43,6 +44,11 @@ router.post(
   validate,
   loginLimiter,
   login
+);
+
+router.post(
+  "/demo-login",
+  demoLogin
 );
 
 router.post(

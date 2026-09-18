@@ -92,7 +92,7 @@ export const login = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      user.wrongPasswordAttempts += 1;
+      user.wrongPasswordAttempts = (Number(user.wrongPasswordAttempts) || 0) + 1;
 
       logger.warn({
         type: "LOGIN_FAILED",
@@ -229,6 +229,279 @@ export const login = async (req, res, next) => {
       })
     );
 
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const demoLogin = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+
+    // ==============================
+    // VALID ROLE CHECK
+    // ==============================
+
+    const demoCredentials = {
+      admin: {
+        email: process.env.DEMO_ADMIN_EMAIL,
+        password: process.env.DEMO_ADMIN_PASSWORD,
+      },
+
+      staff: {
+        email: process.env.DEMO_STAFF_EMAIL,
+        password: process.env.DEMO_STAFF_PASSWORD,
+      },
+
+      customer: {
+        email: process.env.DEMO_CUSTOMER_EMAIL,
+        password: process.env.DEMO_CUSTOMER_PASSWORD,
+      },
+    };
+
+    const credentials = demoCredentials[role];
+
+    if (!credentials) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid demo role",
+      });
+    }
+
+    // ==============================
+    // CHECK ENV CREDENTIALS
+    // ==============================
+
+    if (!credentials.email || !credentials.password) {
+      logger.error({
+        type: "DEMO_LOGIN_CONFIG_ERROR",
+        role,
+        message: "Demo credentials are missing from environment variables",
+      });
+
+      return res.status(500).json({
+        success: false,
+        message: "Demo login is not configured",
+      });
+    }
+
+    // ==============================
+    // FIND DEMO USER
+    // ==============================
+
+    const user = await User.findOne({
+      email: credentials.email,
+    });
+
+    if (!user) {
+      logger.error({
+        type: "DEMO_USER_NOT_FOUND",
+        role,
+        email: credentials.email,
+      });
+
+      return res.status(404).json({
+        success: false,
+        message: `Demo ${role} account not found`,
+      });
+    }
+
+    // ==============================
+    // VERIFY ROLE
+    // ==============================
+
+    if (user.role !== role) {
+      logger.error({
+        type: "DEMO_ROLE_MISMATCH",
+        expectedRole: role,
+        actualRole: user.role,
+        userId: user._id,
+      });
+
+      return res.status(403).json({
+        success: false,
+        message: "Demo account role mismatch",
+      });
+    }
+
+    // ==============================
+    // BLOCK CHECK
+    // ==============================
+
+    if (user.isBlocked) {
+      return res.status(403).json({
+        success: false,
+        message: "This demo account has been blocked",
+      });
+    }
+
+    // ==============================
+    // DELETION CHECK
+    // ==============================
+
+    if (user.deletionRequested) {
+      return res.status(403).json({
+        success: false,
+        message: "This demo account is scheduled for deletion",
+      });
+    }
+
+    // ==============================
+    // ACCOUNT LOCK CHECK
+    // ==============================
+
+    if (user.lockUntil && user.lockUntil > Date.now()) {
+      const remaining = Math.ceil(
+        (user.lockUntil - Date.now()) / 60000
+      );
+
+      return res.status(403).json({
+        success: false,
+        message: `Account locked. Try again in ${remaining} minutes`,
+      });
+    }
+
+    // ==============================
+    // PASSWORD CHECK
+    // ==============================
+
+    const isMatch = await bcrypt.compare(
+      credentials.password,
+      user.password
+    );
+
+    if (!isMatch) {
+      logger.error({
+        type: "DEMO_LOGIN_PASSWORD_MISMATCH",
+        role,
+        userId: user._id,
+      });
+
+      return res.status(401).json({
+        success: false,
+        message: "Demo login credentials are invalid",
+      });
+    }
+
+    // ==============================
+    // RESET FAILED ATTEMPTS
+    // ==============================
+
+    user.wrongPasswordAttempts = 0;
+    user.lockUntil = null;
+
+    user.save().catch((err) =>
+      logger.error({
+        type: "DEMO_ATTEMPT_RESET_FAILED",
+        userId: user._id,
+        error: err.message,
+      })
+    );
+
+    // ==============================
+    // ACCOUNT STATUS CHECK
+    // ==============================
+
+    if (user.status === "pending") {
+      return res.status(403).json({
+        success: false,
+        message: "Demo account is not approved yet",
+      });
+    }
+
+    if (user.status === "rejected") {
+      return res.status(403).json({
+        success: false,
+        message: "Demo account has been rejected",
+      });
+    }
+
+    // ==============================
+    // GENERATE JWT
+    // ==============================
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+        status: user.status,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    // ==============================
+    // HTTP-ONLY COOKIE
+    // ==============================
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? "none"
+          : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // ==============================
+    // DEVICE INFO
+    // ==============================
+
+    const parser = new UAParser(
+      req.headers["user-agent"]
+    );
+
+    const result = parser.getResult();
+
+    // ==============================
+    // RESPONSE
+    // ==============================
+
+    res.status(200).json({
+      success: true,
+      message: `Welcome ${user.name}`,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        status: user.status,
+        address: user.address || "",
+        avatar: user.avatar || "",
+        createdAt: user.createdAt,
+      },
+    });
+
+    // ==============================
+    // SAVE SESSION
+    // ==============================
+
+    Session.create({
+      user: user._id,
+      token,
+      device: result.device.model || "Desktop",
+      browser: result.browser.name || "Unknown Browser",
+      os: result.os.name
+        ? `${result.os.name} ${
+            result.os.version || ""
+          }`.trim()
+        : "Unknown OS",
+      ip:
+        req.ip ||
+        req.headers["x-forwarded-for"] ||
+        "Unknown IP",
+      lastActive: new Date(),
+    }).catch((err) =>
+      logger.error({
+        type: "DEMO_SESSION_SAVE_FAILED",
+        userId: user._id,
+        error: err.message,
+      })
+    );
   } catch (error) {
     next(error);
   }
