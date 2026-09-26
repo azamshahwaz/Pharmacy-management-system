@@ -31,17 +31,26 @@ export const signup = async (req, res, next) => {
     }
 
     // ===== Prevent multiple admins =====
-    if (role === "admin") {
-      const existingAdmin = await User.findOne({ role: "admin" });
-      const tempAdminExists = [...tempUsers.values()].some(
-        (u) => u.role === "admin"
-      );
-      if (existingAdmin || tempAdminExists) {
-        return res.status(403).json({
-          message: "Admin already exists. Only one admin allowed",
-        });
-      }
-    }
+// ===== Maximum 2 admins allowed =====
+if (role === "admin") {
+  // Count admins already registered in DB
+  const existingAdminCount = await User.countDocuments({
+    role: "admin",
+  });
+
+  // Count admins who have signup completed but OTP is not verified yet
+  const tempAdminCount = [...tempUsers.values()].filter(
+    (u) => u.role === "admin"
+  ).length;
+
+  const totalAdminCount = existingAdminCount + tempAdminCount;
+
+  if (totalAdminCount >= 2) {
+    return res.status(403).json({
+      message: "Maximum 2 admins are allowed",
+    });
+  }
+}
 
     // ===== Email validation =====
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
