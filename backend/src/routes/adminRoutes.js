@@ -1,5 +1,10 @@
 import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
+
+import {
+  protect,
+  adminControlPermission,
+} from "../middleware/authMiddleware.js";
+
 import { authorizeRoles } from "../middleware/roleMiddleware.js";
 
 import {
@@ -25,6 +30,7 @@ const router = express.Router();
 // ==============================
 // Admin Profile
 // ==============================
+
 router.get(
   "/",
   protect,
@@ -35,6 +41,7 @@ router.get(
 // ==============================
 // User Management
 // ==============================
+
 router.get(
   "/users",
   protect,
@@ -42,12 +49,10 @@ router.get(
   getAllUsers
 );
 
-router.delete(
-  "/:id",
-  protect,
-  authorizeRoles("admin"),
-  deleteUser
-);
+// ==============================
+// Update User
+// Admin + Staff can update
+// ==============================
 
 router.put(
   "/:id",
@@ -59,6 +64,7 @@ router.put(
 // ==============================
 // Dashboard Stats
 // ==============================
+
 router.get(
   "/dashboard/stats",
   protect,
@@ -69,6 +75,7 @@ router.get(
 // ==============================
 // Reports
 // ==============================
+
 router.get(
   "/reports",
   protect,
@@ -79,6 +86,7 @@ router.get(
 // ==============================
 // Managed Users
 // ==============================
+
 router.get(
   "/managed-users",
   protect,
@@ -87,41 +95,56 @@ router.get(
 );
 
 // ==============================
-// Admin Controls - User Actions
+// ADMIN CONTROL OPERATIONS
+// ONLY ADMIN_CONTROL_EMAIL
 // ==============================
+
+// Change user role
 router.post(
   "/users/change-role",
   protect,
-  authorizeRoles("admin"),
+  adminControlPermission,
   changeUserRole
 );
 
+// Block user
 router.post(
   "/users/block",
   protect,
-  authorizeRoles("admin"),
+  adminControlPermission,
   blockUser
 );
 
+// Unblock user
 router.post(
   "/users/unblock",
   protect,
-  authorizeRoles("admin"),
+  adminControlPermission,
   unblockUser
 );
 
+// Soft delete user
 router.post(
   "/users/soft-delete",
   protect,
-  authorizeRoles("admin"),
+  adminControlPermission,
   softDeleteUser
 );
 
+// Restore user
 router.post(
   "/users/restore",
   protect,
-  authorizeRoles("admin"),
+  adminControlPermission,
   restoreUser
+);
+
+// Permanent delete user
+router.delete(
+  "/:id",
+  protect,
+  adminControlPermission,
+  deleteUser
 );
 
 export default router;
