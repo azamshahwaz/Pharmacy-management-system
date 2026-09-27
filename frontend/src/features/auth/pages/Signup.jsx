@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../../services/apiClient";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
 import { toast } from "react-toastify";
@@ -13,6 +14,7 @@ const PASSWORD_MIN = 6;
 const PASSWORD_MAX = 18;
 
 function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -253,8 +255,8 @@ function Signup() {
                     strength === "weak"
                       ? "text-red-500"
                       : strength === "medium"
-                      ? "text-yellow-500"
-                      : "text-green-500"
+                        ? "text-yellow-500"
+                        : "text-green-500"
                   }
                 >
                   {strength}
@@ -337,6 +339,16 @@ function Signup() {
             <button type="submit" disabled={loading} className="btn btn-primary w-full">
               {loading ? "Signing up..." : "Signup"}
             </button>
+            <div className="mt-4 text-center text-sm text-base-content/60">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="font-semibold text-primary hover:underline"
+              >
+                Login
+              </button>
+            </div>
           </form>
         </div>
       </div>
