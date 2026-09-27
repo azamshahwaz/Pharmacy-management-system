@@ -63,6 +63,7 @@ const Medicines = () => {
       setMedicines(res.data || []);
     } catch (err) {
       console.log(err);
+      toast.error("Failed to load medicines");
     }
   };
 
@@ -74,8 +75,18 @@ const Medicines = () => {
   // INPUT CHANGE
   // =========================================
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const { name, value } = e.target;
+
+  if (name === "discount" && Number(value) > 100) {
+    toast.error("Discount cannot exceed 100%");
+    return;
+  }
+
+  setForm({
+    ...form,
+    [name]: value,
+  });
+};
 
   // =========================================
   // CHECK EXPIRED
@@ -90,50 +101,74 @@ const Medicines = () => {
   // =========================================
   // PRICE
   // =========================================
-  const price = form.mrp
-  ? (Number(form.mrp) - (Number(form.mrp) * Number(form.discount || 0)) / 100).toFixed(2)
+  const discountValue = Number(form.discount || 0);
+const safeDiscount = Math.min(100, Math.max(0, discountValue));
+
+const price = form.mrp
+  ? (
+      Number(form.mrp) -
+      (Number(form.mrp) * safeDiscount) / 100
+    ).toFixed(2)
   : "0.00";
 
   // =========================================
   // SUBMIT — no token arg needed
   // =========================================
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const finalData = {
-      productName: form.productName,
-      manufacturer: form.manufacturer,
-      productCategory: form.productCategory,
-      mrp: Number(form.mrp),
-      discount: Number(form.discount || 0),
-      // handleSubmit mein
-      price: Number((Number(form.mrp) - (Number(form.mrp) * Number(form.discount || 0)) / 100).toFixed(2)),
-      expiryDate: form.expiryDate,
-    };
+  const discount = Number(form.discount || 0);
 
-    try {
-      if (editId) {
-        await updateMedicine(editId, finalData);
-      } else {
-        await addMedicine(finalData);
-      }
+  if (discount < 0 || discount > 100) {
+    toast.error("Discount must be between 0% and 100%");
+    return;
+  }
 
-      setForm({
-        productName: "",
-        manufacturer: "",
-        productCategory: "tablet",
-        mrp: "",
-        discount: "",
-        expiryDate: "",
-      });
+  const mrp = Number(form.mrp);
 
-      setEditId(null);
-      fetchMedicines();
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed to save medicine");
-    }
+  const finalData = {
+    productName: form.productName,
+    manufacturer: form.manufacturer,
+    productCategory: form.productCategory,
+    mrp,
+    discount,
+    price: Number(
+      (mrp - (mrp * discount) / 100).toFixed(2)
+    ),
+    expiryDate: form.expiryDate,
   };
+
+  try {
+    if (editId) {
+      await updateMedicine(editId, finalData);
+      toast.success("Medicine updated successfully");
+    } else {
+      await addMedicine(finalData);
+      toast.success("Medicine added successfully");
+    }
+
+    setForm({
+      productName: "",
+      manufacturer: "",
+      productCategory: "tablet",
+      mrp: "",
+      discount: "",
+      expiryDate: "",
+    });
+
+    setEditId(null);
+    fetchMedicines();
+  } catch (err) {
+    console.error("SAVE MEDICINE ERROR:", err);
+
+    toast.error(
+      err?.response?.data?.message ||
+        (editId
+          ? "Failed to update medicine"
+          : "Failed to add medicine")
+    );
+  }
+};
 
   // EDIT
   const handleEdit = (med) => {
@@ -152,16 +187,90 @@ const Medicines = () => {
   // =========================================
   // DELETE — no token arg needed
   // =========================================
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this medicine?")) {
-      try {
-        await deleteMedicine(id);
-        fetchMedicines();
-      } catch (err) {
-        console.log(err);
-      }
+  const handleDelete = (id) => {
+  const medicine = medicines.find((m) => m._id === id);
+
+  toast(
+    ({ closeToast }) => (
+      <div className="w-[320px]">
+        <div className="mb-3 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <Trash2 size={18} />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-slate-800">
+              Delete Medicine?
+            </h3>
+
+            <p className="text-xs text-slate-500">
+              This action cannot be undone.
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-4 rounded-lg bg-red-50 px-3 py-2">
+          <p className="text-sm text-red-700">
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">
+              {medicine?.productName}
+            </span>
+            ?
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={closeToast}
+            className="rounded-lg border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onClick={async () => {
+              closeToast();
+
+              try {
+                const res = await deleteMedicine(id);
+
+                toast.success(
+                  res?.data?.message ||
+                    "Medicine deleted successfully"
+                );
+
+                fetchMedicines();
+              } catch (err) {
+                console.error(
+                  "DELETE MEDICINE ERROR:",
+                  err
+                );
+
+                toast.error(
+                  err?.response?.data?.message ||
+                    "Failed to delete medicine"
+                );
+              }
+            }}
+            className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 active:scale-95"
+          >
+            <Trash2 size={15} />
+            Delete
+          </button>
+        </div>
+      </div>
+    ),
+    {
+      autoClose: false,
+      closeOnClick: false,
+      closeButton: true,
+      position: "top-center",
+      className: "!rounded-xl !shadow-lg",
     }
-  };
+  );
+};
 
   // =========================================
   // CATEGORY COUNT
@@ -252,7 +361,7 @@ const Medicines = () => {
             ))}
           </select>
           <input required type="number" name="mrp" placeholder="MRP" value={form.mrp} onChange={handleChange} />
-          <input type="number" name="discount" placeholder="Discount %" value={form.discount} onChange={handleChange} />
+          <input type="number" name="discount" placeholder="Discount %" min="0" max="100" step="0.01" value={form.discount} onChange={handleChange} />
           <input type="date" name="expiryDate" value={form.expiryDate} onChange={handleChange} />
           <div className="priceBox">₹ {price}</div>
           <button className="btn">{editId ? "Update" : "Add"}</button>
