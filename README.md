@@ -78,7 +78,7 @@ The Staff dashboard provides role-specific access to customer orders, medicines,
 
 ---
 
-## 🛠️ Customer Dashboard
+## 👤 Customer Dashboard
 
 ![Customer Dashboard](./Screenshots/CustomerDashboard.png)
 
