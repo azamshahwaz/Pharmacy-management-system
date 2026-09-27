@@ -82,6 +82,8 @@ The Staff dashboard provides role-specific access to customer orders, medicines,
 
 ![Customer Dashboard](./Screenshots/CustomerDashboard.png)
 
+---
+
 # 📖 About the Project
 
 **PharmaFlow** is a role-based pharmacy management platform designed to digitize common pharmacy workflows such as:
