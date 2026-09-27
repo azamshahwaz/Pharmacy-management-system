@@ -40,7 +40,7 @@ This allows users to quickly explore the different role-specific dashboards and 
 
 ## 🔐 Login Page
 
-![Login](./Screenshots/Login.png)
+![Login](./Screenshots/LoginPage.png)
 
 The login page supports role-based authentication along with quick-login options for directly exploring the Admin, Staff, and Customer experiences.
 
@@ -78,9 +78,13 @@ The Staff dashboard provides role-specific access to customer orders, medicines,
 
 ---
 
+## 🛠️ Customer Dashboard
+
+![Customer Dashboard](./Screenshots/CustomerDashboard.png)
+
 # 📖 About the Project
 
-**New Drug** is a role-based pharmacy management platform designed to digitize common pharmacy workflows such as:
+**PharmaFlow** is a role-based pharmacy management platform designed to digitize common pharmacy workflows such as:
 
 * User registration and verification
 * Admin approval workflows
