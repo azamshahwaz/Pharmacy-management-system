@@ -207,7 +207,7 @@ const CustomerBilling = () => {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-green-900">Customer Billing</h1>
         <div className="w-16 h-1 bg-green-600 mt-1 rounded"></div>
-        <p className="text-gray-500 mt-1">New Drug Pharmacy</p>
+        <p className="text-gray-500 mt-1">PharmaFlow</p>
       </div>
 
       {/* TABLE */}

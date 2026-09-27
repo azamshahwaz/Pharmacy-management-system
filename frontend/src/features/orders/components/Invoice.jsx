@@ -210,7 +210,7 @@ const Invoice = ({
 
               <div>
                 <h1 className="text-[32px] leading-none font-extrabold text-teal-700">
-                  New Drug
+                  PharmaFlow
                 </h1>
 
                 <p className="text-sm text-gray-500 mt-1">
@@ -370,7 +370,7 @@ const Invoice = ({
                 </span>
 
                 <span className="font-semibold">
-                  New Drug
+                  PharmaFlow
                 </span>
 
                 <span className="text-gray-500">

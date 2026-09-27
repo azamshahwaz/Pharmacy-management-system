@@ -10,7 +10,7 @@ const sendEmail = async (to, subject, textContent) => {
     body: JSON.stringify({
       sender: {
         email: process.env.EMAIL_FROM,
-        name: "New Drug",
+        name: "PharmaFlow",
       },
       to: [{ email: to }],
       subject,
@@ -43,7 +43,7 @@ Your OTP is: ${otp}
 Valid for 5 minutes.
 
 Regards,
-New Drug Team`
+PharmaFlow Team`
     );
     console.log("OTP mail sent to:", email);
     return true;
@@ -72,10 +72,10 @@ Status: Pending Approval
 Your order is currently under review by our team.
 You will be notified once it is accepted or rejected.
 
-Thank you for choosing New Drug.
+Thank you for choosing PharmaFlow.
 
 Regards,
-New Drug Team`
+PharmaFlow Team`
     );
     console.log("Order placed mail sent:", email);
   } catch (error) {
@@ -102,7 +102,7 @@ export const sendOrderStatusEmail = async (email, order) => {
       delivered: {
         subject: "Order Delivered",
         message:
-          "Your order has been delivered successfully.\n\nThank you for choosing New Drug!",
+          "Your order has been delivered successfully.\n\nThank you for choosing PharmaFlow!",
       },
     };
 
@@ -121,7 +121,7 @@ Total Amount: ₹${Number(order.grandTotal).toFixed(2)}
 Status: ${order.status}
 
 Regards,
-New Drug Team`
+PharmaFlow Team`
     );
     console.log("Order status mail sent:", email);
   } catch (error) {
@@ -141,7 +141,7 @@ export const sendUserStatusEmail = async (email, user) => {
 
 You can now log in and start using our services.
 
-Thank you for choosing New Drug — we're happy to have you onboard!`,
+Thank you for choosing PharmaFlow — we're happy to have you onboard!`,
       },
       rejected: {
         subject: "Account Rejected",
@@ -166,7 +166,7 @@ ${entry.message}
 Account Status: ${user.status}
 
 Regards,
-New Drug Team`
+PharmaFlow Team`
     );
     console.log("User status mail sent:", email);
   } catch (error) {

@@ -204,7 +204,7 @@ if (result.isConfirmed) {
           </div>
 
           <div>
-            <h1 className="text-lg font-semibold">New Drug</h1>
+            <h1 className="text-lg font-semibold">PharmaFlow</h1>
             <p className="text-xs text-gray-400 capitalize">{role} Panel</p>
           </div>
         </div>
